@@ -16,11 +16,9 @@
         var payload = '';
         socket.on('for_client_send', function (data) {
             payload = data;
-
-            document.getElementById("sendNote").click(); // Comment to stop sending data
             socket.emit('for_server_send', true);
+            document.getElementById("sendNote").click(); // Comment to stop sending data
         });
-
 
     </script>
     <!-- To help ensure reliability, Microsoft provides a second CDN -->

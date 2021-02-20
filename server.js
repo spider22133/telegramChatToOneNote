@@ -34,21 +34,22 @@ app.get('*', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+    socket.removeAllListeners();
     // console.log('a user connected');
     // TELEGRAM
     bot.on("polling_error", console.log);
     bot.on('message', (msg) => {
         // ID
-        const chatId = msg.chat.id;
+        let chatId = msg.chat.id;
 
         (async () => {
             let payload = '';
 
             // images and files handler
-            const dataFile = await getData(msg.caption, chatId, msg, bot).then(data => data);
+            const dataFile = await getData(msg.caption, msg, bot).then(data => data);
 
             // text handler
-            const dataText = await getData(msg.text, chatId, msg, bot).then(data => data);
+            const dataText = await getData(msg.text, msg, bot).then(data => data);
 
             if(dataFile) payload = toHTML(dataFile[1], dataFile[0], "Page with image and text");
             if(dataText) payload = toHTML(dataText, '', "Page with text");
@@ -56,6 +57,7 @@ io.on('connection', (socket) => {
             socket.emit('for_client_send', payload);
             socket.on('for_server_send', function(data) {
                 if(data) bot.sendMessage(chatId, 'Saved in OneNote');
+                socket.removeAllListeners();
             });
         })();
 
