@@ -1,7 +1,7 @@
-// const showdown = require('showdown'),
-//     converter = new showdown.Converter();
+const showdown = require('showdown'),
+    converter = new showdown.Converter();
 
-async function getData(data, chatId, msg, bot) {
+async function getData(data, msg, bot) {
 
     if (!data) return null;
 
@@ -25,20 +25,19 @@ async function getFileData(msg, data, bot) {
 }
 
 function toHTML(text = 'Sample Text', src = '', title = 'New Page') {
-    let img = '';
-    console.log('text1\n', text);
+    let img = '', html;
 
-    text = escape(text);
-    console.log('text2\n', text);
+    text = escape(text); // escape to create markdown
+    // console.log('text22222\n', text);
 
-    text = text.replace(/(?:\r\n|\r|\n)/g, '<br>');
-    console.log('text3\n', text);
+    html = converter.makeHtml(text); // add tags to markdown
+    // console.log('html1111\n', html);
 
-    // let html = converter.makeHtml(text);
-    // console.log('html1\n', html);
+    html = html.replace(/>\s+</g, "><"); // delete all spaces between tags
+    // console.log('html2222\n', html);
+
     if (src !== '') img = `<img src='${src}'>`;
-
-    return `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${text}</body></html>`
+    return `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`
 }
 
 const getFromBetween = {
@@ -85,6 +84,7 @@ var escape = function (str) {
     return str.replace(/[\u2018\u2019\u00b4]/g, "'")
         .replace(/[\u201c\u201d\u2033]/g, '"')
         .replace(/[\u2212\u2022\u00b7\u25aa]/g, '-')
+        .replace(/[\u00AD\u002D]/g, ' - ')
         .replace(/[\u2013\u2015]/g, '--')
         .replace(/\u2014/g, '---')
         .replace(/\u2026/g, '...')
@@ -96,9 +96,9 @@ var escape = function (str) {
         .replace(/\n\n\s*\\\n/g, '\n\n')
         .replace(/\n\n\n*/g, '\n\n')
         .replace(/[ ]+$/gm, '')
-        .replace(/^\s+|[\s\\]+$/g, '');
+        .replace(/^\s+|[\s\\]+$/g, '')
+        .replace(/\n/g, "\n\n");
 };
-
 module.exports = {
     toHTML,
     getData
