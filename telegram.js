@@ -9,9 +9,8 @@ async function getData(data, msg, bot) {
         if (msg.document) {
             return await getFileData(msg, data, bot);
         } else {
-            return data.replace('\/bookmark', '');
+            return escape_pointers(data);
         }
-
     }
 }
 
@@ -19,12 +18,12 @@ async function getFileData(msg, data, bot) {
     let img = [];
 
     img[0] = await bot.getFileLink(msg.document.file_id);
-    if (data.replace('\/bookmark', '').length > 0) img[1] = await data.replace('\/bookmark', '');
+    if (data.replace('\/bookmark', '').length > 0) img[1] = await escape_pointers(data);
 
     return img;
 }
 
-function toHTML(text = 'Sample Text', src = '', title = 'New Page') {
+function toHTML(text, src = '', title = 'New Page') {
     let img = '', html;
 
     text = escape(text); // escape to create markdown
@@ -39,6 +38,33 @@ function toHTML(text = 'Sample Text', src = '', title = 'New Page') {
     if (src !== '') img = `<img src='${src}'>`;
     return `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`
 }
+
+const escape = (str) => {
+    return str.replace(/[\u2018\u2019\u00b4]/g, "'")
+        .replace(/[\u201c\u201d\u2033]/g, '"')
+        .replace(/[\u2212\u2022\u00b7\u25aa]/g, '-')
+        .replace(/[\u00AD\u002D]/g, ' - ')
+        .replace(/[\u2013\u2015]/g, '--')
+        .replace(/\u2014/g, '---')
+        .replace(/\u2026/g, '...')
+        .replace(/[ ]+\n/g, '\n')
+        .replace(/\s*\\\n/g, '\\\n')
+        .replace(/\s*\\\n\s*\\\n/g, '\n\n')
+        .replace(/\s*\\\n\n/g, '\n\n')
+        .replace(/\n-\n/g, '\n')
+        .replace(/\n\n\s*\\\n/g, '\n\n')
+        .replace(/\n\n\n*/g, '\n\n')
+        .replace(/[ ]+$/gm, '')
+        .replace(/^\s+|[\s\\]+$/g, '')
+        .replace(/\n/g, "\n\n");
+};
+
+const escape_pointers = (str) => {
+    return str.replace('\/bookmark', '')
+        .replace('\/b_title', '')
+        .replace('\/b_section', '')
+        .replace(/{{.*?}}/g, '');
+};
 
 const getFromBetween = {
     results: [],
@@ -80,25 +106,7 @@ const getFromBetween = {
     }
 };
 
-var escape = function (str) {
-    return str.replace(/[\u2018\u2019\u00b4]/g, "'")
-        .replace(/[\u201c\u201d\u2033]/g, '"')
-        .replace(/[\u2212\u2022\u00b7\u25aa]/g, '-')
-        .replace(/[\u00AD\u002D]/g, ' - ')
-        .replace(/[\u2013\u2015]/g, '--')
-        .replace(/\u2014/g, '---')
-        .replace(/\u2026/g, '...')
-        .replace(/[ ]+\n/g, '\n')
-        .replace(/\s*\\\n/g, '\\\n')
-        .replace(/\s*\\\n\s*\\\n/g, '\n\n')
-        .replace(/\s*\\\n\n/g, '\n\n')
-        .replace(/\n-\n/g, '\n')
-        .replace(/\n\n\s*\\\n/g, '\n\n')
-        .replace(/\n\n\n*/g, '\n\n')
-        .replace(/[ ]+$/gm, '')
-        .replace(/^\s+|[\s\\]+$/g, '')
-        .replace(/\n/g, "\n\n");
-};
+
 module.exports = {
     toHTML,
     getData
