@@ -16,7 +16,8 @@
         var payload = '';
         socket.on('for_client_send', function (data) {
             payload = data;
-            socket.emit('for_server_send', true);
+            console.log(data);
+            (payload) ? socket.emit('for_server_send', true) : socket.emit('for_server_send', false);
             document.getElementById("sendNote").click(); // Comment to stop sending data
         });
 

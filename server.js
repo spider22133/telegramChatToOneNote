@@ -34,11 +34,11 @@ app.get('*', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    socket.removeAllListeners();
-    // console.log('a user connected');
+
     // TELEGRAM
     bot.on("polling_error", console.log);
     bot.on('message', (msg) => {
+        // console.log(msg);
         // ID
         let chatId = msg.chat.id;
 
@@ -53,10 +53,13 @@ io.on('connection', (socket) => {
 
             if(dataFile) payload = toHTML(dataFile[1], dataFile[0], "Page with image and text");
             if(dataText) payload = toHTML(dataText, '', "Page with text");
+            // console.log(payload);
+            (payload) ? socket.emit('for_client_send', payload) : socket.emit('for_client_send', false);
 
-            socket.emit('for_client_send', payload);
             socket.on('for_server_send', function(data) {
-                if(data) bot.sendMessage(chatId, 'Saved in OneNote');
+                // TODO make a 'Saved in OneNote' only for one tab(client).
+
+                (data) ? bot.sendMessage(chatId, 'Saved in OneNote') : bot.sendMessage(chatId, 'Nothing to save');
                 socket.removeAllListeners();
             });
         })();

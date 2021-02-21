@@ -1,35 +1,41 @@
 const showdown = require('showdown'),
     converter = new showdown.Converter();
 
-async function getData(data, msg, bot) {
+async function getData(str, msg, bot) {
 
-    if (!data) return null;
+    if (!str) return null;
 
-    if (data.search('\/bookmark') !== -1) {
+    if (str.search('\/bookmark') !== -1) {
         if (msg.document) {
-            return await getFileData(msg, data, bot);
-        } else {
-            return escape_pointers(data);
+            return await getFileData(msg.document, str, bot);
+        }
+        else if (msg.photo) {
+            return await getFileData(msg.photo[2], str, bot);
+        }
+        else {
+            return escape_pointers(str);
         }
     }
 }
 
-async function getFileData(msg, data, bot) {
+async function getFileData(doc, str, bot) {
     let img = [];
 
-    img[0] = await bot.getFileLink(msg.document.file_id);
-    if (data.replace('\/bookmark', '').length > 0) img[1] = await escape_pointers(data);
+    img[0] = await bot.getFileLink(doc.file_id);
+    if (str.replace('\/bookmark', '').length > 0) img[1] = await escape_pointers(str);
 
     return img;
 }
 
-function toHTML(text, src = '', title = 'New Page') {
+function toHTML(str = '', src = '', title = 'New Page') {
     let img = '', html;
+    console.log(src);
+    if(str.trim() === '' && src === '') return false; // stop if no text and no im
 
-    text = escape(text); // escape to create markdown
+    str = escape(str); // escape to create markdown
     // console.log('text22222\n', text);
 
-    html = converter.makeHtml(text); // add tags to markdown
+    html = converter.makeHtml(str); // add tags to markdown
     // console.log('html1111\n', html);
 
     html = html.replace(/>\s+</g, "><"); // delete all spaces between tags
