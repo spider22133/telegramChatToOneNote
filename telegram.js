@@ -5,10 +5,7 @@ async function sendToOneNote(str, msg, bot, socket) {
     const {chat: {id}} = msg;
     let payload;
 
-    payload = await getData(str, msg, bot)
-        .then(data => data)
-        .catch(err => console.log(err));
-
+    payload = await getData(str, msg, bot);
     payload = toHTML(payload['text'], payload['src'], payload['title']);
 
     (payload) ? socket.emit('for_client_send', payload) : socket.emit('for_client_send', false);
@@ -38,8 +35,12 @@ async function getData(str, msg, bot) {
 async function getFileData(doc, str, bot) {
     let img = {};
 
-    if (str.replace('\/bookmark', '').length > 0) img['text'] = await escape_pointers(str);
-    img['src'] = await bot.getFileLink(doc.file_id);
+    if (str.replace('\/bookmark', '').length > 0) img['text'] = escape_pointers(str);
+    try {
+        img['src'] = await bot.getFileLink(doc.file_id);
+    } catch (err) {
+        console.log(err)
+    }
 
     return img;
 }
