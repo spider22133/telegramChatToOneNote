@@ -1,45 +1,57 @@
 const showdown = require('showdown'),
     converter = new showdown.Converter();
 
+async function sendToOneNote(str, msg, bot, socket) {
+    const {chat: {id}} = msg;
+    let payload;
+
+    payload = await getData(str, msg, bot)
+        .then(data => data)
+        .catch(err => console.log(err));
+
+    payload = toHTML(payload['text'], payload['src'], payload['title']);
+
+    (payload) ? socket.emit('for_client_send', payload) : socket.emit('for_client_send', false);
+
+    socket.on('for_server_send', function (data) {
+        // TODO make a 'Saved in OneNote' only for one tab(client).
+
+        (data) ? bot.sendMessage(id, 'Saved in OneNote') : bot.sendMessage(id, 'Nothing to save');
+        socket.removeAllListeners();
+    });
+}
+
 async function getData(str, msg, bot) {
+        const {document, photo} = msg;
 
-    if (!str) return null;
-
-    if (str.search('\/bookmark') !== -1) {
-        if (msg.document) {
-            return await getFileData(msg.document, str, bot);
+        if (document) {
+            return await getFileData(document, str, bot);
         }
-        else if (msg.photo) {
-            return await getFileData(msg.photo[2], str, bot);
+        else if (photo) {
+            return await getFileData(photo[2], str, bot);
         }
         else {
-            return escape_pointers(str);
+            return {'text' : escape_pointers(str)};
         }
-    }
 }
 
 async function getFileData(doc, str, bot) {
-    let img = [];
+    let img = {};
 
-    img[0] = await bot.getFileLink(doc.file_id);
-    if (str.replace('\/bookmark', '').length > 0) img[1] = await escape_pointers(str);
+    if (str.replace('\/bookmark', '').length > 0) img['text'] = await escape_pointers(str);
+    img['src'] = await bot.getFileLink(doc.file_id);
 
     return img;
 }
 
 function toHTML(str = '', src = '', title = 'New Page') {
     let img = '', html;
-    console.log(src);
-    if(str.trim() === '' && src === '') return false; // stop if no text and no im
+
+    if(str.trim() === '' && src === '') return false; // stop if no text and no image
 
     str = escape(str); // escape to create markdown
-    // console.log('text22222\n', text);
-
     html = converter.makeHtml(str); // add tags to markdown
-    // console.log('html1111\n', html);
-
     html = html.replace(/>\s+</g, "><"); // delete all spaces between tags
-    // console.log('html2222\n', html);
 
     if (src !== '') img = `<img src='${src}'>`;
     return `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`
@@ -114,6 +126,5 @@ const getFromBetween = {
 
 
 module.exports = {
-    toHTML,
-    getData
+    sendToOneNote
 };

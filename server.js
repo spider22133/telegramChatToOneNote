@@ -4,7 +4,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const morgan = require('morgan');
 const path = require('path');
-const {toHTML, getData} = require("./telegram");
+const {sendToOneNote} = require("./telegram");
 
 const TelegramBot = require('node-telegram-bot-api');
 // replace the value below with the Telegram token you receive from @BotFather
@@ -34,36 +34,20 @@ app.get('*', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-
     // TELEGRAM
     bot.on("polling_error", console.log);
     bot.on('message', (msg) => {
-        // console.log(msg);
-        // ID
-        let chatId = msg.chat.id;
+        const {text, caption} = msg;
 
-        (async () => {
-            let payload = '';
+        if (text) {
+            if (text.search('\/bookmark') === -1) return; // Stop if no pointer in text
+            sendToOneNote(text, msg, bot, socket);
+        }
 
-            // images and files handler
-            const dataFile = await getData(msg.caption, msg, bot).then(data => data);
-
-            // text handler
-            const dataText = await getData(msg.text, msg, bot).then(data => data);
-
-            if(dataFile) payload = toHTML(dataFile[1], dataFile[0], "Page with image and text");
-            if(dataText) payload = toHTML(dataText, '', "Page with text");
-            // console.log(payload);
-            (payload) ? socket.emit('for_client_send', payload) : socket.emit('for_client_send', false);
-
-            socket.on('for_server_send', function(data) {
-                // TODO make a 'Saved in OneNote' only for one tab(client).
-
-                (data) ? bot.sendMessage(chatId, 'Saved in OneNote') : bot.sendMessage(chatId, 'Nothing to save');
-                socket.removeAllListeners();
-            });
-        })();
-
+        if (caption) {
+            if (caption.search('\/bookmark') === -1) return;  // Stop if no pointer in caption
+            sendToOneNote(caption, msg, bot, socket);
+        }
     });
 
 });
