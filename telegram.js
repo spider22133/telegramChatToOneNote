@@ -19,17 +19,15 @@ async function sendToOneNote(str, msg, bot, socket) {
 }
 
 async function getData(str, msg, bot) {
-        const {document, photo} = msg;
+    const {document, photo} = msg;
 
-        if (document) {
-            return await getFileData(document, str, bot);
-        }
-        else if (photo) {
-            return await getFileData(photo[2], str, bot);
-        }
-        else {
-            return {'text' : escape_pointers(str)};
-        }
+    if (document) {
+        return await getFileData(document, str, bot);
+    } else if (photo) {
+        return await getFileData(photo[2], str, bot);
+    } else {
+        return {'text': escape_pointers(str)};
+    }
 }
 
 async function getFileData(doc, str, bot) {
@@ -48,13 +46,12 @@ async function getFileData(doc, str, bot) {
 function toHTML(str = '', src = '', title = 'New Page') {
     let img = '', html;
 
-    if(str.trim() === '' && src === '') return false; // stop if no text and no image
+    if (str.trim() === '' && src === '') return false; // stop if no text and no image
+    if (src !== '') img = `<img src='${src}'>`;
 
-    str = escape(str); // escape to create markdown
-    html = converter.makeHtml(str); // add tags to markdown
+    html = converter.makeHtml(escape(str)); //escape to create markdown, then add tags to markdown
     html = html.replace(/>\s+</g, "><"); // delete all spaces between tags
 
-    if (src !== '') img = `<img src='${src}'>`;
     return `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`
 }
 
