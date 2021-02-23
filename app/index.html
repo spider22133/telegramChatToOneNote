@@ -18,9 +18,12 @@
             payload = data;
             console.log(data);
             (payload) ? socket.emit('for_server_send', true) : socket.emit('for_server_send', false);
-            document.getElementById("sendNote").click(); // Comment to stop sending data
-        });
-
+             document.getElementById("getNotes").click();
+            // document.getElementById("sendNote").click(); // Comment to stop sending data
+         });
+        function sendPagesList(list) {
+            console.log(list);
+        }
     </script>
     <!-- To help ensure reliability, Microsoft provides a second CDN -->
     <script type="text/javascript">
@@ -49,12 +52,8 @@
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title" id="WelcomeMessage">Please sign-in to see your profile and read your mails</h5>
-                <button class="btn btn-primary" id="sendNote" style="visibility: hidden" onclick="sendNote(payload)">
-                    Send note
-                </button>
-                <button class="btn btn-primary" id="getNotes" style="visibility: hidden" onclick="getNotes()">Send
-                    note
-                </button>
+                <button class="btn btn-primary" id="sendNote" style="visibility: hidden" onclick="sendNote(payload)"></button>
+                <button class="btn btn-primary" id="getNotes" style="visibility: hidden" onclick="getNotes()"></button>
             </div>
         </div>
     </div>

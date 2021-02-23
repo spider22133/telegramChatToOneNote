@@ -115,7 +115,7 @@ function readMail() {
 function getNotes() {
     getTokenPopup(loginRequest)
         .then(response => {
-            callMSGraph(graphConfig.graphNotesPagesEndpoint, response.accessToken);
+            callMSGraph(graphConfig.graphNotesPagesEndpoint, response.accessToken, sendPagesList);
         }).catch(error => {
         console.error(error);
     });
