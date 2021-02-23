@@ -16,9 +16,6 @@ const bot = new TelegramBot(token, {polling: true});
 // EXPRESS APP
 const DEFAULT_PORT = process.env.PORT || 3000;
 
-// initialize express.
-// const app = express();
-// const io = require('socket.io')(app);
 // Initialize variables.
 let port = DEFAULT_PORT;
 
@@ -49,7 +46,6 @@ io.on('connection', (socket) => {
             sendToOneNote(caption, msg, bot, socket);
         }
     });
-
 });
 
 // Start the server.

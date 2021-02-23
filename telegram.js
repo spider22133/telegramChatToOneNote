@@ -49,7 +49,7 @@ function toHTML(str = '', src = '', title = 'New Page') {
     if (str.trim() === '' && src === '') return false; // stop if no text and no image
     if (src !== '') img = `<img src='${src}'>`;
 
-    html = converter.makeHtml(escape(str)); //escape to create markdown, then add tags to markdown
+    html = converter.makeHtml(escape(str)); // escape to create markdown, then add tags to markdown
     html = html.replace(/>\s+</g, "><"); // delete all spaces between tags
 
     return `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`
@@ -121,7 +121,6 @@ const getFromBetween = {
         return this.results;
     }
 };
-
 
 module.exports = {
     sendToOneNote
