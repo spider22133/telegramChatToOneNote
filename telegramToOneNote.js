@@ -6,7 +6,7 @@ async function sendToOneNote(str, msg, bot, socket) {
     let payload;
 
     payload = await getData(str, msg, bot);
-    payload = toHTML(payload['text'], payload['src'], payload['title']);
+    payload = toHTML({...payload});
 
     (payload) ? socket.emit('for_client_send', payload) : socket.emit('for_client_send', false);
 
@@ -20,17 +20,18 @@ async function sendToOneNote(str, msg, bot, socket) {
 
 async function getData(str, msg, bot) {
     const {document, photo} = msg;
+    const titles = getPointers(str); // get Array with section and title
 
     if (document) {
-        return await getFileData(document, str, bot);
+        return await getFileData(document, str, bot, titles);
     } else if (photo) {
-        return await getFileData(photo[2], str, bot);
+        return await getFileData(photo[2], str, bot, titles);
     } else {
-        return {'text': escape_pointers(str)};
+        return {...titles, text: escape_pointers(str)};
     }
 }
 
-async function getFileData(doc, str, bot) {
+async function getFileData(doc, str, bot, titles) {
     let img = {};
 
     if (str.replace('\/bookmark', '').length > 0) img['text'] = escape_pointers(str);
@@ -40,19 +41,31 @@ async function getFileData(doc, str, bot) {
         console.log(err)
     }
 
-    return img;
+    return {...img, ...titles};
 }
 
-function toHTML(str = '', src = '', title = 'New Page') {
+function getPointers(str){
+    let newObj = {};
+    let titles = getFromBetween.get(str,"{{","}}");
+    newObj['section'] = titles[0];
+    newObj['title'] = titles[1];
+ return newObj;
+}
+
+function toHTML({text, src, title, section}) {
     let img = '', html;
 
-    if (str.trim() === '' && src === '') return false; // stop if no text and no image
-    if (src !== '') img = `<img src='${src}'>`;
+    if (text.trim() === '' && src === '') return false; // stop if no text and no image
+    if (src !== undefined) img = `<img src='${src}'>`;
 
-    html = converter.makeHtml(escape(str)); // escape to create markdown, then add tags to markdown
+    html = converter.makeHtml(escape(text)); // escape to create markdown, then add tags to markdown
     html = html.replace(/>\s+</g, "><"); // delete all spaces between tags
 
-    return `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`
+    return {
+        text:`<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`,
+        title,
+        section
+    }
 }
 
 const escape = (str) => {

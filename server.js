@@ -4,7 +4,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const morgan = require('morgan');
 const path = require('path');
-const {sendToOneNote} = require("./telegram");
+const {sendToOneNote} = require("./telegramToOneNote");
 
 const TelegramBot = require('node-telegram-bot-api');
 // replace the value below with the Telegram token you receive from @BotFather
