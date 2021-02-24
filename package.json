@@ -4,7 +4,7 @@
   "description": "A JavaScript single-page application calling Microsoft Graph API using MSAL.js (w/ AAD v2 endpoint)",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "repository": {
