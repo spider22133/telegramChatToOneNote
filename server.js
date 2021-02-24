@@ -6,6 +6,8 @@ const morgan = require('morgan');
 const path = require('path');
 const {toHTML, getData} = require("./telegram");
 
+// Kommenturensohn
+
 const TelegramBot = require('node-telegram-bot-api');
 // replace the value below with the Telegram token you receive from @BotFather
 const token = '1671081058:AAGiE4gpnBoZn4Hg8uJLqRmdMeIDhCDqpmo';
