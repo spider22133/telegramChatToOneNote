@@ -18,12 +18,8 @@
             payload = data;
             console.log(data);
             (payload) ? socket.emit('for_server_send', true) : socket.emit('for_server_send', false);
-             document.getElementById("getNotes").click();
-            // document.getElementById("sendNote").click(); // Comment to stop sending data
+            document.getElementById("sendNote").click(); // Comment to stop sending data
          });
-        function sendPagesList(list) {
-            console.log(list);
-        }
     </script>
     <!-- To help ensure reliability, Microsoft provides a second CDN -->
     <script type="text/javascript">
@@ -53,7 +49,6 @@
             <div class="card-body">
                 <h5 class="card-title" id="WelcomeMessage">Please sign-in to see your profile and read your mails</h5>
                 <button class="btn btn-primary" id="sendNote" style="visibility: hidden" onclick="sendNote(payload)"></button>
-                <button class="btn btn-primary" id="getNotes" style="visibility: hidden" onclick="getNotes()"></button>
             </div>
         </div>
     </div>
@@ -91,6 +86,7 @@
 <!-- <script type="text/javascript" src="./authRedirect.js"></script>   -->
 <!-- uncomment the above line and comment the line below if you would like to use the redirect flow -->
 <script type="text/javascript" src="./authPopup.js"></script>
+<script type="text/javascript" src="./oneNoteConnect.js"></script>
 <script type="text/javascript" src="./graph.js"></script>
 
 </body>
