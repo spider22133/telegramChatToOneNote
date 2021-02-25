@@ -4,11 +4,14 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const morgan = require('morgan');
 const path = require('path');
-const {sendToOneNote} = require("./telegramToOneNote");
+require('dotenv').config();
+const {toHTML, getData} = require("./telegram");
+
+// Kommenturensohn
 
 const TelegramBot = require('node-telegram-bot-api');
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '1671081058:AAGiE4gpnBoZn4Hg8uJLqRmdMeIDhCDqpmo';
+const token = process.env.TOKEN_TEL;
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: true});
 
