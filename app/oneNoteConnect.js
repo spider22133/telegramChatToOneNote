@@ -9,19 +9,21 @@ async function getNotes() {
 
 }
 
-async function sendNote(data, section = "New%20Section") {
+async function sendNote(data) {
+    const {section, text} = data;
     const {value} = await getNotes();
 
     value.forEach(page => {
         console.log(page)
     });
+
     console.log(data);
-    /*getTokenPopup(tokenRequest)
-        .then(response => {
-            callMSGraphPost(data, `${graphConfig.graphNotesPagesEndpoint}?sectionName=${section}`, response.accessToken);
-        }).catch(error => {
-        console.error(error);
-    });*/
+    // getTokenPopup(tokenRequest)
+    //     .then(response => {
+    //         callMSGraphPost(text, `${graphConfig.graphNotesPagesEndpoint}?sectionName=${section}`, response.accessToken);
+    //     }).catch(error => {
+    //     console.error(error);
+    // });
 }
 
 function updateNote() {
