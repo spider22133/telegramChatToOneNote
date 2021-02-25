@@ -21,7 +21,7 @@ async function sendToOneNote(str, msg, bot, socket) {
 async function getData(str, msg, bot) {
     const {document, photo} = msg;
     const titles = getPointers(str); // get Array with section and title
-
+    console.log(titles);
     if (document) {
         return await getFileData(document, str, bot, titles);
     } else if (photo) {
@@ -46,9 +46,14 @@ async function getFileData(doc, str, bot, titles) {
 
 function getPointers(str){
     let newObj = {};
-    let titles = getFromBetween.get(str,"{{","}}");
-    newObj['section'] = titles[0];
-    newObj['title'] = titles[1];
+    let title = str.match('/b_title (.*?)}}');
+    let section = str.match('/b_section (.*?)}}');
+
+    title = getFromBetween.get(title[0],"{{","}}");
+    section = getFromBetween.get(section[0],"{{","}}");
+
+    newObj['title'] = title[0];
+    newObj['section'] = section[0];
  return newObj;
 }
 
