@@ -32,6 +32,7 @@
   "homepage": "https://github.com/Azure-Samples/ms-identity-javascript-v2#readme",
   "dependencies": {
     "@azure/msal-browser": "^2.11.1",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "node-telegram-bot-api": "^0.51.0",
