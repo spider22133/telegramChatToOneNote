@@ -1,31 +1,40 @@
+async function sendNote(data) {
+    const {title, section, text, content} = data;
+    const {value} = await getNotes();
+    let page_id;
+
+    value.forEach(page => {
+        if (page.title === title) {
+            page_id = page.id;
+        }
+    });
+
+    if (page_id) {
+        updateNote(content, page_id);
+    } else {
+        getTokenPopup(tokenRequest)
+            .then(response => {
+                addNewPage(text, `${graphConfig.graphNotesPagesEndpoint}?sectionName=${section}`, response.accessToken);
+            }).catch(error => {
+            console.error(error);
+        });
+    }
+}
+
 async function getNotes() {
     try {
         const token = await getTokenPopup(tokenRequest);
-        return await callMSGraph(graphConfig.graphNotesPagesEndpoint, token.accessToken);
-    }
-    catch (e) {
+        return await getPageData(graphConfig.graphNotesPagesEndpoint, token.accessToken);
+    } catch (e) {
         console.log(e)
     }
-
 }
 
-async function sendNote(data) {
-    const {section, text} = data;
-    const {value} = await getNotes();
-
-    value.forEach(page => {
-        console.log(page)
+function updateNote(text, page_id) {
+    getTokenPopup(tokenRequest)
+        .then(response => {
+            updatePage(text, `${graphConfig.graphNotesPagesEndpoint}/${page_id}/content`, response.accessToken);
+        }).catch(error => {
+        console.error("updateNote", error);
     });
-
-    console.log(data);
-    // getTokenPopup(tokenRequest)
-    //     .then(response => {
-    //         callMSGraphPost(text, `${graphConfig.graphNotesPagesEndpoint}?sectionName=${section}`, response.accessToken);
-    //     }).catch(error => {
-    //     console.error(error);
-    // });
-}
-
-function updateNote() {
-
 }

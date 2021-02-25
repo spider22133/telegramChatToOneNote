@@ -68,6 +68,7 @@ function toHTML({text, src, title, section}) {
 
     return {
         text:`<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`,
+        content: `${img}${html}`,
         title,
         section
     }

@@ -5,7 +5,7 @@ const io = require('socket.io')(http);
 const morgan = require('morgan');
 const path = require('path');
 require('dotenv').config();
-const {toHTML, getData} = require("./telegram");
+const {sendToOneNote} = require("./telegramToOneNote");
 
 // Kommenturensohn
 

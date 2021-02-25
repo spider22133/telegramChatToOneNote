@@ -2,7 +2,7 @@
  * Helper function to call MS Graph API endpoint
  * using the authorization bearer token scheme
 */
-async function callMSGraph(endpoint, token) {
+async function getPageData(endpoint, token) {
     const headers = new Headers();
     const bearer = `Bearer ${token}`;
 
@@ -18,7 +18,7 @@ async function callMSGraph(endpoint, token) {
     return await res.json();
 }
 
-function callMSGraphPost(payload, endpoint, token) {
+function addNewPage(payload, endpoint, token) {
     const options = {
         method: "POST",
         headers: {
@@ -35,4 +35,29 @@ function callMSGraphPost(payload, endpoint, token) {
         .then(response => response.json())
         .then(response => console.log(response))
         .catch(error => console.log(error));
+}
+
+function updatePage(payload, endpoint, token) {
+    const newContent = [{
+        'target':'body',
+        'action':'append',
+        'content': payload
+    }];
+
+    const options = {
+        method: "PATCH",
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type' : 'application/json',
+            'Content-Length': newContent.length
+        },
+        body: JSON.stringify(newContent)
+    };
+
+    console.log('POST request made to Graph API at: ' + new Date().toString());
+
+    fetch(endpoint, options)
+        .then(response => response.text())
+        .then(response => response)
+        .catch(error => console.log("callMSGraphPostUpdate",error));
 }
