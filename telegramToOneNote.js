@@ -25,7 +25,7 @@ async function getData(str, msg, bot) {
     if (document) {
         return await getFileData(document, str, bot, titles);
     } else if (photo) {
-        return await getFileData(photo[2], str, bot, titles);
+        return await getFileData(photo[photo.length - 1], str, bot, titles); // get last image size in array
     } else {
         return {...titles, text: escape_pointers(str)};
     }

@@ -38,6 +38,8 @@ function addNewPage(payload, endpoint, token) {
 }
 
 function updatePage(payload, endpoint, token) {
+    console.log(payload);
+
     const newContent = [{
         'target':'body',
         'action':'append',
@@ -59,5 +61,5 @@ function updatePage(payload, endpoint, token) {
     fetch(endpoint, options)
         .then(response => response.text())
         .then(response => response)
-        .catch(error => console.log("callMSGraphPostUpdate",error));
+        .catch(error => console.log(error));
 }
