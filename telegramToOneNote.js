@@ -7,8 +7,8 @@ async function sendToOneNote(str, msg, bot, socket) {
 
     payload = await getData(str, msg, bot);
     payload = toHTML({...payload});
-
-    (payload) ? socket.emit('for_client_send', payload) : socket.emit('for_client_send', false);
+    console.log(payload);
+    (payload.content !== '') ? socket.emit('for_client_send', payload) : socket.emit('for_client_send', false);
 
     socket.on('for_server_send', function (data) {
         // TODO make a 'Saved in OneNote' only for one tab(client).
@@ -21,7 +21,7 @@ async function sendToOneNote(str, msg, bot, socket) {
 async function getData(str, msg, bot) {
     const {document, photo} = msg;
     const titles = getPointers(str); // get Array with section and title
-    console.log(titles);
+
     if (document) {
         return await getFileData(document, str, bot, titles);
     } else if (photo) {
@@ -44,22 +44,22 @@ async function getFileData(doc, str, bot, titles) {
     return {...img, ...titles};
 }
 
-function getPointers(str){
+function getPointers(str) {
     let newObj = {};
-    let title = str.match('/b_title (.*?)}}');
-    let section = str.match('/b_section (.*?)}}');
+    let title = str.match('/b_title(.*?)}}');
+    let section = str.match('/b_section(.*?)}}');
 
-    title = getFromBetween.get(title[0],"{{","}}");
-    section = getFromBetween.get(section[0],"{{","}}");
+    title = getFromBetween.get(title[0], "{{", "}}");
+    section = getFromBetween.get(section[0], "{{", "}}");
 
     newObj['title'] = title[0];
     newObj['section'] = section[0];
- return newObj;
+    return newObj;
 }
 
 function toHTML({text, src, title, section}) {
     let img = '', html;
-
+    console.log("text", text.trim() === '');
     if (text.trim() === '' && src === '') return false; // stop if no text and no image
     if (src !== undefined) img = `<img src='${src}'>`;
 
@@ -67,7 +67,7 @@ function toHTML({text, src, title, section}) {
     html = html.replace(/>\s+</g, "><"); // delete all spaces between tags
 
     return {
-        text:`<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`,
+        text: `<!DOCTYPE html><html><head><title>${title}</title><meta name='created' content='' /></head><body>${img}${html}</body></html>`,
         content: `${img}${html}`,
         title,
         section
@@ -96,9 +96,12 @@ const escape = (str) => {
 
 const escape_pointers = (str) => {
     return str.replace('\/bookmark', '')
-        .replace('\/b_title', '')
-        .replace('\/b_section', '')
-        .replace(/{{.*?}}/g, '');
+        .replace('@markeSaverBot', '')
+        .replace(/\/b_title(.*?)}}/g, '')
+        .replace(/\/b_section(.*?)}}/g, '');
+    // .replace('\/b_title', '')
+    // .replace('\/b_section', '')
+
 };
 
 const getFromBetween = {
