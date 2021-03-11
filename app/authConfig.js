@@ -7,7 +7,7 @@ const msalConfig = {
     auth: {
         clientId: "08a72cd1-5adb-44ef-a6b2-d73fc8ce6c3b",
         authority: "https://login.microsoftonline.com/common",
-        redirectUri: "http://localhost:3000/",
+        redirectUri: "https://telegram-to-one-note-bot.herokuapp.com/",
     },
     cache: {
         cacheLocation: "localStorage", // This configures where your cache will be stored
